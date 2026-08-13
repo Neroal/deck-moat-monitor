@@ -66,8 +66,8 @@
                 border:1px solid rgba(240,169,60,.35);font-size:10.5px;font-weight:600;
                 padding:3px 10px;border-radius:20px;letter-spacing:.5px}
 
-  /* ── 簽名元素：燈號（現已併入各卡片標題列） ─── */
-  .lamp{flex:0 0 auto;width:10px;height:10px;border-radius:50%;
+  /* ── 簽名元素：燈號（卡片標題列右上角） ─── */
+  .lamp{flex:0 0 auto;width:10px;height:10px;border-radius:50%;margin-left:auto;
         background:#3a3f4d;box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
   .lamp.g{background:var(--green);box-shadow:0 0 0 3px var(--green-soft),0 0 8px rgba(34,171,148,.65)}
   .lamp.y{background:var(--yellow);box-shadow:0 0 0 3px var(--yellow-soft),0 0 8px rgba(240,169,60,.65)}
@@ -86,12 +86,9 @@
           background:var(--panel-2);border:1px solid var(--line);border-radius:6px;
           padding:2px 7px;letter-spacing:.5px}
   h2{font-size:14.5px;font-weight:600;color:var(--ink)}
-  .sec-metric{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
-             margin-left:auto;white-space:nowrap}
-  /* 狀態列：燈號＋判讀語，取代舊的獨立燈號排 */
+  /* 狀態列：判讀語 */
   .sec-status{display:flex;align-items:center;gap:7px;margin:6px 0 4px;flex-wrap:wrap}
   .lv{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
-  .ls{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-left:auto;white-space:nowrap}
   .chart{width:100%;height:270px}
 
   /* 切換按鈕：分段控制器 */
@@ -162,9 +159,8 @@
   <!-- 一、毛利率 -->
   <section>
     <div class="sec-head"><span class="sec-no">01</span><h2>核心品牌力</h2>
-      <span class="sec-metric">單季毛利率 Gross Margin</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp1"></span><span class="lv" id="v1">—</span>
-      <span class="ls" id="s1">—</span></div>
+      <span class="lamp" id="lamp1"></span></div>
+    <div class="sec-status"><span class="lv" id="v1">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">最新毛利率</div><div class="v" id="gm-latest">—</div></div>
       <div class="stat"><div class="k">YoY 同期變化</div><div class="v" id="gm-yoy-stat">—</div></div>
@@ -182,9 +178,8 @@
   <!-- 二、資產負債安全 -->
   <section>
     <div class="sec-head"><span class="sec-no">02</span><h2>財務安全防禦力</h2>
-      <span class="sec-metric">現金部位 vs 總負債</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp2"></span><span class="lv" id="v2">—</span>
-      <span class="ls" id="s2">—</span></div>
+      <span class="lamp" id="lamp2"></span></div>
+    <div class="sec-status"><span class="lv" id="v2">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">淨現金部位</div><div class="v" id="bs-net">—</div></div>
       <div class="stat"><div class="k">現金覆蓋倍數</div><div class="v" id="bs-ratio">—</div></div>
@@ -196,9 +191,8 @@
   <!-- 三、股票回購 -->
   <section>
     <div class="sec-head"><span class="sec-no">03</span><h2>股票回購進度</h2>
-      <span class="sec-metric">在外流通股數 Shares Outstanding</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp3"></span><span class="lv" id="v3">—</span>
-      <span class="ls" id="s3">—</span></div>
+      <span class="lamp" id="lamp3"></span></div>
+    <div class="sec-status"><span class="lv" id="v3">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">當季股數縮減率</div><div class="v" id="bb-rate">—</div></div>
       <div class="stat"><div class="k">近 5 年累計縮減</div><div class="v" id="bb-5y">—</div></div>
@@ -210,9 +204,8 @@
   <!-- 四、EPS × 淨利率 -->
   <section>
     <div class="sec-head"><span class="sec-no">04</span><h2>每股含金量與賺錢效率</h2>
-      <span class="sec-metric">稀釋 EPS（左軸）× 淨利率（右軸）</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp4"></span><span class="lv" id="v4">—</span>
-      <span class="ls" id="s4">—</span></div>
+      <span class="lamp" id="lamp4"></span></div>
+    <div class="sec-status"><span class="lv" id="v4">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">近四季 EPS 年增率</div><div class="v" id="eq-eps">—</div></div>
       <div class="stat"><div class="k">近四季營收年增率</div><div class="v" id="eq-rev">—</div></div>
@@ -224,9 +217,8 @@
   <!-- 五、庫存健康度 -->
   <section>
     <div class="sec-head"><span class="sec-no">05</span><h2>庫存健康度（領先指標）</h2>
-      <span class="sec-metric">庫存 YoY vs 營收 YoY</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp5"></span><span class="lv" id="v5">—</span>
-      <span class="ls" id="s5">—</span></div>
+      <span class="lamp" id="lamp5"></span></div>
+    <div class="sec-status"><span class="lv" id="v5">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">庫存年增率</div><div class="v" id="inv-yoy">—</div></div>
       <div class="stat"><div class="k">營收年增率</div><div class="v" id="inv-rev-yoy">—</div></div>
@@ -238,9 +230,8 @@
   <!-- 六、現金品質 / 自由現金流 -->
   <section>
     <div class="sec-head"><span class="sec-no">06</span><h2>盈餘現金品質</h2>
-      <span class="sec-metric">營運現金流 vs 淨利</span></div>
-    <div class="sec-status"><span class="lamp" id="lamp6"></span><span class="lv" id="v6">—</span>
-      <span class="ls" id="s6">—</span></div>
+      <span class="lamp" id="lamp6"></span></div>
+    <div class="sec-status"><span class="lv" id="v6">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">近四季現金轉換率</div><div class="v" id="ocf-ratio">—</div></div>
       <div class="stat"><div class="k">本季自由現金流</div><div class="v" id="ocf-fcf">—</div></div>
@@ -302,11 +293,10 @@ async function loadData(){
 }
 
 /* ── 燈號 ─────────────────────────────────────────────────── */
-function setLamp(n, color, verdict, sub){
+function setLamp(n, color, verdict){
   $('lamp'+n).className = 'lamp '+color;
   $('v'+n).textContent = verdict;
   $('v'+n).style.color = color==='r'?C.red:(color==='y'?C.yellow:(color==='g'?C.green:C.ink));
-  $('s'+n).textContent = sub;
 }
 
 /* ── 01 毛利率 ────────────────────────────────────────────── */
@@ -326,7 +316,7 @@ function renderGM(){
   }else{ al.className='callout red'; }
 
   // 燈號
-  setLamp(1, breach?'r':'g', breach?'定價權警示':'定價權穩固', latest.label);
+  setLamp(1, breach?'r':'g', breach?'定價權警示':'定價權穩固');
 
   // 關鍵數字
   $('gm-latest').textContent = fmtPct(latest.gross_margin);
@@ -401,7 +391,7 @@ function renderBS(){
     co.innerHTML='<b>🟡 注意</b>：總負債 '+fmtB(debtT)+' 已高於現金部位 '+fmtB(cashT)+
       '，缺口 '+fmtB(debtT-cashT)+'。建議檢視是擴張性租約增加、或現金被大量消耗所致。';
   }
-  setLamp(2, safe?'g':'y', safe?'財務絕對安全':'負債高於現金', latest.label);
+  setLamp(2, safe?'g':'y', safe?'財務絕對安全':'負債高於現金');
 
   // 關鍵數字
   const net = cashT - debtT;
@@ -462,13 +452,13 @@ function renderBB(){
     co.innerHTML='<b>💡 股東利多</b>：本季現金部位減少 '+fmtB(cashPrev-cashNow)+
       '，同時在外流通股數減少 '+((prev.shares-latest.shares)/1e6).toFixed(1)+'M 股（−'+rate.toFixed(2)+
       '%）。現金減少主因為公司正於低檔進行高效股票回購，此為股東利多。';
-    setLamp(3,'g','低檔高效回購中','本季股數 −'+rate.toFixed(2)+'% · 現金 −'+fmtB(cashPrev-cashNow));
+    setLamp(3,'g','低檔高效回購中');
   }else if(sharesDown){
     co.className='callout green';
-    setLamp(3,'g','回購持續進行','本季股數 −'+rate.toFixed(2)+'%');
+    setLamp(3,'g','回購持續進行');
   }else{
     co.className='callout green';
-    setLamp(3,'y','本季無淨回購', prev?('股數 '+(rate<0?'+':'')+(-rate).toFixed(2)+'%'):'—');
+    setLamp(3,'y','本季無淨回購');
   }
 
   const barColors = view.map((q,i)=>{
@@ -518,14 +508,14 @@ function renderEQ(){
     co.className='callout green show';
     co.innerHTML='<b>🟢 複利效應運轉中</b>：近四季 EPS 年增 '+epsG.toFixed(1)+'%，快於營收年增 '+revG.toFixed(1)+
       '%。回購縮減股數 × 淨利率維持，正在放大每股價值。';
-    setLamp(4,'g','複利效應運轉中','EPS '+(epsG>=0?'+':'')+epsG.toFixed(1)+'% vs 營收 '+(revG>=0?'+':'')+revG.toFixed(1)+'%');
+    setLamp(4,'g','複利效應運轉中');
   }else if(epsG!=null){
     co.className='callout yellow show';
     co.innerHTML='<b>🟡 觀察</b>：近四季 EPS 年增 '+epsG.toFixed(1)+'%，未跑贏營收年增 '+revG.toFixed(1)+
       '%。可能是利潤率承壓或回購力道趨緩，建議閱讀最新財報確認。';
-    setLamp(4,'y','EPS 成長落後營收','EPS '+(epsG>=0?'+':'')+epsG.toFixed(1)+'% vs 營收 '+(revG>=0?'+':'')+revG.toFixed(1)+'%');
+    setLamp(4,'y','EPS 成長落後營收');
   }else{
-    setLamp(4,'','數據不足','需至少 8 季數據');
+    setLamp(4,'','數據不足');
   }
 
   const x = view.map(q=>q.label);
@@ -555,7 +545,7 @@ function renderInv(){
     return {...q, inv_yoy:(q.inventory/p.inventory-1)*100, rev_yoy:(q.revenue/p.revenue-1)*100};
   });
   const view = withYoY.filter(q=>q.inv_yoy!=null).slice(-20);
-  if(view.length===0){ setLamp(5,'','數據不足','需至少 5 季庫存數據'); return; }
+  if(view.length===0){ setLamp(5,'','數據不足'); return; }
   const latest = view[view.length-1];
   const prev = view.length>1 ? view[view.length-2] : null;
   const gap = latest.inv_yoy - latest.rev_yoy;
@@ -581,8 +571,7 @@ function renderInv(){
     al.className='callout red';
   }
   setLamp(5, persistent?'r':(breach?'y':'g'),
-    persistent?'去化壓力警示':(breach?'庫存增速超前':'庫存與營收同步'),
-    latest.label+' 缺口 '+(gap>=0?'+':'')+gap.toFixed(1)+'pp');
+    persistent?'去化壓力警示':(breach?'庫存增速超前':'庫存與營收同步'));
 
   const x = view.map(q=>q.label);
   const traces = [
@@ -603,7 +592,7 @@ function renderInv(){
 /* ── 06 盈餘現金品質 ──────────────────────────────────────── */
 function renderOCF(){
   const qs = DATA.quarters.filter(q=>q.ocf!=null && q.net_income!=null);
-  if(qs.length===0){ setLamp(6,'','數據不足','需要營運現金流數據'); return; }
+  if(qs.length===0){ setLamp(6,'','數據不足'); return; }
   const view = qs.slice(-20);
   const latest = qs[qs.length-1];
 
@@ -640,8 +629,7 @@ function renderOCF(){
     co.className='callout yellow';
   }
   setLamp(6, lossQuality?'r':(weak?'y':(ratio!=null?'g':'')),
-    lossQuality?'盈餘品質警示':(weak?'現金轉換率偏低':(ratio!=null?'盈餘品質良好':'數據不足')),
-    ratio!=null?('TTM OCF/NI '+ratio.toFixed(2)+'x'):'—');
+    lossQuality?'盈餘品質警示':(weak?'現金轉換率偏低':(ratio!=null?'盈餘品質良好':'數據不足')));
 
   const x = view.map(q=>q.label);
   const traces = [
