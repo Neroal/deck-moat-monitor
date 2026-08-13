@@ -69,6 +69,12 @@ TAGS = {
     "debt_st": ["ShortTermBorrowings", "OtherShortTermBorrowings"],
     "lease_cur": ["OperatingLeaseLiabilityCurrent"],
     "lease_noncur": ["OperatingLeaseLiabilityNoncurrent"],
+    "inventory": ["InventoryNet"],
+    "ocf": ["NetCashProvidedByUsedInOperatingActivities"],
+    "capex": [
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsForCapitalImprovements",
+    ],
 }
 
 
@@ -192,6 +198,57 @@ def quarterly_flows(items: list):
     return quarters, annuals
 
 
+def cumulative_flows(items: list):
+    """
+    現金流量表科目：10-Q 揭露的是「年初至今累計數」而非單季數，
+    例如 Q2 揭露的是 H1（6 個月）累計、Q3 揭露 9 個月累計。
+    先依期間長度分桶（Q1/H1/9mo/FY），單季 Q1 之外，
+    Q2=H1−Q1、Q3=9mo−H1、Q4=FY−9mo，交給 derive_q4 完成 Q4。
+    回傳 (quarters, annuals)，annuals 供 derive_q4 使用。
+    """
+    q1, h1, m9, annuals = {}, {}, {}, {}
+    for it in items:
+        if not it["start"]:
+            continue
+        start, end = parse_date(it["start"]), parse_date(it["end"])
+        days = (end - start).days
+        fy, _, _ = fiscal_label(end)
+        bucket = None
+        if 75 <= days <= 105:
+            bucket = q1
+        elif 165 <= days <= 195:
+            bucket = h1
+        elif 255 <= days <= 285:
+            bucket = m9
+        elif 350 <= days <= 380:
+            bucket = annuals
+        if bucket is None:
+            continue
+        if fy not in bucket or it["filed"] > bucket[fy]["filed"]:
+            bucket[fy] = it
+
+    quarters = {}
+    for fy, it in q1.items():
+        quarters[(fy, 1)] = it
+    for fy, it in h1.items():
+        prior = q1.get(fy)
+        if prior:
+            quarters[(fy, 2)] = {
+                "start": None, "end": it["end"],
+                "val": it["val"] - prior["val"], "filed": it["filed"],
+                "derived": True,
+            }
+    for fy, it in m9.items():
+        prior = h1.get(fy)
+        if prior:
+            quarters[(fy, 3)] = {
+                "start": None, "end": it["end"],
+                "val": it["val"] - prior["val"], "filed": it["filed"],
+                "derived": True,
+            }
+    return quarters, annuals
+
+
 def derive_q4(quarters: dict, annuals: dict):
     """Q4 = 全年 − (Q1+Q2+Q3)。三季齊備且尚無 Q4 時才反推。"""
     for fy, ann in annuals.items():
@@ -270,11 +327,21 @@ def latest_financial_filing(submissions: dict):
     recent = submissions.get("filings", {}).get("recent", {})
     forms = recent.get("form", [])
     dates = recent.get("filingDate", [])
+    accns = recent.get("accessionNumber", [])
+    docs = recent.get("primaryDocument", [])
     best = None
-    for form, fdate in zip(forms, dates):
+    for i, (form, fdate) in enumerate(zip(forms, dates)):
         if form in ("10-Q", "10-K"):
             if best is None or fdate > best["filed"]:
-                best = {"form": form, "filed": fdate}
+                accn = accns[i] if i < len(accns) else None
+                doc = docs[i] if i < len(docs) else None
+                url = None
+                if accn and doc:
+                    url = (
+                        f"https://www.sec.gov/Archives/edgar/data/{int(CIK)}/"
+                        f"{accn.replace('-', '')}/{doc}"
+                    )
+                best = {"form": form, "filed": fdate, "url": url}
     return best
 
 
@@ -290,11 +357,15 @@ def build_dataset(latest_filing: dict) -> dict:
     cogs_q, cogs_a = quarterly_flows(collect_facts(facts, TAGS["cogs"], ("USD",)))
     ni_q, ni_a = quarterly_flows(collect_facts(facts, TAGS["net_income"], ("USD",)))
     eps_q, eps_a = quarterly_flows(collect_facts(facts, TAGS["eps"], ("USD/shares",)))
+    ocf_q, ocf_a = cumulative_flows(collect_facts(facts, TAGS["ocf"], ("USD",)))
+    capex_q, capex_a = cumulative_flows(collect_facts(facts, TAGS["capex"], ("USD",)))
 
     derive_q4(rev_q, rev_a)
     derive_q4(cogs_q, cogs_a)
     derive_q4(ni_q, ni_a)
     derive_q4(eps_q, eps_a)
+    derive_q4(ocf_q, ocf_a)
+    derive_q4(capex_q, capex_a)
 
     # EPS 分割換算（以「該事實的申報日」判斷是否為分割前口徑）
     for key, it in eps_q.items():
@@ -308,6 +379,7 @@ def build_dataset(latest_filing: dict) -> dict:
     dst_q = instant_by_quarter(collect_facts(facts, TAGS["debt_st"], ("USD",)))
     lc_q = instant_by_quarter(collect_facts(facts, TAGS["lease_cur"], ("USD",)))
     lnc_q = instant_by_quarter(collect_facts(facts, TAGS["lease_noncur"], ("USD",)))
+    inv_q = instant_by_quarter(collect_facts(facts, TAGS["inventory"], ("USD",)))
     sh_q = shares_by_quarter(facts)
 
     # 以「營收有單季數據」的季度為主軸組裝
@@ -318,6 +390,8 @@ def build_dataset(latest_filing: dict) -> dict:
         cogs = cogs_q.get((fy, q))
         ni = ni_q.get((fy, q))
         eps = eps_q.get((fy, q))
+        ocf = ocf_q.get((fy, q))
+        capex = capex_q.get((fy, q))
 
         def val(d, default=None):
             return d["val"] if d else default
@@ -327,6 +401,9 @@ def build_dataset(latest_filing: dict) -> dict:
         gm = (revenue - cogs_v) / revenue if (cogs_v is not None and revenue) else None
         ni_v = val(ni)
         nm = ni_v / revenue if (ni_v is not None and revenue) else None
+        ocf_v = val(ocf)
+        capex_v = val(capex)
+        fcf_v = (ocf_v - capex_v) if (ocf_v is not None and capex_v is not None) else None
 
         quarters.append({
             "label": label,
@@ -349,6 +426,10 @@ def build_dataset(latest_filing: dict) -> dict:
             "debt_lease": (
                 val(lc_q.get((fy, q)), 0) + val(lnc_q.get((fy, q)), 0)
             ),
+            "inventory": val(inv_q.get((fy, q))),
+            "ocf": ocf_v,
+            "capex": capex_v,
+            "fcf": fcf_v,
             "shares": round(val(sh_q.get((fy, q), None), 0)) or None,
         })
 

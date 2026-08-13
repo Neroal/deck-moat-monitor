@@ -152,6 +152,12 @@
 
 <div id="load-error"></div>
 
+<div class="callout yellow show" id="segment-note" style="margin-bottom:14px">
+  <b>🔍 本季待辦：品牌結構人工複核</b>：雙品牌護城河（HOKA vs UGG）的營收占比是 segment 資料，
+  XBRL 結構化程度不足以自動抓取。請在最新財報中確認 HOKA 是否仍維持增速、是否全靠 UGG 撐盤 ——
+  <a href="#" id="segment-link" style="color:inherit;text-decoration:underline">開啟最新 10-Q（Segment Note）</a>。
+</div>
+
 <main>
   <!-- 一、毛利率 -->
   <section>
@@ -213,6 +219,34 @@
     </div>
     <div class="callout green" id="eq-callout"></div>
     <div class="chart" id="chart-eq"></div>
+  </section>
+
+  <!-- 五、庫存健康度 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>庫存健康度（領先指標）</h2>
+      <span class="sec-metric">庫存 YoY vs 營收 YoY</span></div>
+    <div class="sec-status"><span class="lamp" id="lamp5"></span><span class="lv" id="v5">—</span>
+      <span class="ls" id="s5">—</span></div>
+    <div class="stats">
+      <div class="stat"><div class="k">庫存年增率</div><div class="v" id="inv-yoy">—</div></div>
+      <div class="stat"><div class="k">營收年增率</div><div class="v" id="inv-rev-yoy">—</div></div>
+    </div>
+    <div class="callout red" id="inv-alert"></div>
+    <div class="chart" id="chart-inv"></div>
+  </section>
+
+  <!-- 六、現金品質 / 自由現金流 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">06</span><h2>盈餘現金品質</h2>
+      <span class="sec-metric">營運現金流 vs 淨利</span></div>
+    <div class="sec-status"><span class="lamp" id="lamp6"></span><span class="lv" id="v6">—</span>
+      <span class="ls" id="s6">—</span></div>
+    <div class="stats">
+      <div class="stat"><div class="k">近四季現金轉換率</div><div class="v" id="ocf-ratio">—</div></div>
+      <div class="stat"><div class="k">本季自由現金流</div><div class="v" id="ocf-fcf">—</div></div>
+    </div>
+    <div class="callout yellow" id="ocf-callout"></div>
+    <div class="chart" id="chart-ocf"></div>
   </section>
 </main>
 
@@ -287,7 +321,7 @@ function renderGM(){
   const al = $('gm-alert');
   if(breach){
     al.className='callout red show';
-    al.innerHTML = '<b>⚠ 品牌定價權警示</b>：最新一季（'+latest.label+'）毛利率 '+fmtPct(latest.gross_margin)+
+    al.innerHTML = '<b>🔴 品牌定價權警示</b>：最新一季（'+latest.label+'）毛利率 '+fmtPct(latest.gross_margin)+
       '，已跌破 50% 警戒線。請深入閱讀財報，確認是短期成本因素（如運費、庫存去化）或結構性折扣擴大。';
   }else{ al.className='callout red'; }
 
@@ -512,6 +546,117 @@ function renderEQ(){
   Plotly.react('chart-eq', traces, layout, PCONF);
 }
 
+/* ── 05 庫存健康度 ────────────────────────────────────────── */
+function renderInv(){
+  const base = DATA.quarters.filter(q=>q.inventory!=null && q.revenue);
+  const withYoY = base.map(q=>{
+    const p = base.find(x=>x.fy===q.fy-1 && x.q===q.q);
+    if(!p || !p.inventory) return {...q, inv_yoy:null, rev_yoy:null};
+    return {...q, inv_yoy:(q.inventory/p.inventory-1)*100, rev_yoy:(q.revenue/p.revenue-1)*100};
+  });
+  const view = withYoY.filter(q=>q.inv_yoy!=null).slice(-20);
+  if(view.length===0){ setLamp(5,'','數據不足','需至少 5 季庫存數據'); return; }
+  const latest = view[view.length-1];
+  const prev = view.length>1 ? view[view.length-2] : null;
+  const gap = latest.inv_yoy - latest.rev_yoy;
+  const gapPrev = prev ? (prev.inv_yoy - prev.rev_yoy) : null;
+  const breach = gap > 10;
+  const persistent = breach && gapPrev!=null && gapPrev > 10;
+
+  $('inv-yoy').textContent = (latest.inv_yoy>=0?'+':'')+latest.inv_yoy.toFixed(1)+'%';
+  $('inv-yoy').style.color = breach ? C.red : C.ink;
+  $('inv-rev-yoy').textContent = (latest.rev_yoy>=0?'+':'')+latest.rev_yoy.toFixed(1)+'%';
+
+  const al = $('inv-alert');
+  if(persistent){
+    al.className='callout red show';
+    al.innerHTML='<b>🔴 去化壓力警示（連續兩季）</b>：'+latest.label+' 庫存年增 '+latest.inv_yoy.toFixed(1)+
+      '%，遠超營收年增 '+latest.rev_yoy.toFixed(1)+'%（缺口 '+gap.toFixed(1)+
+      'pp），且上一季同樣超前。這是毛利率崩壞前的領先訊號，貨可能賣不動，留意後續折扣去庫存與毛利率壓力。';
+  }else if(breach){
+    al.className='callout yellow show';
+    al.innerHTML='<b>🟡 觀察</b>：'+latest.label+' 庫存年增（'+latest.inv_yoy.toFixed(1)+
+      '%）超過營收年增（'+latest.rev_yoy.toFixed(1)+'%）逾 10pp，先列入觀察，若下一季持續擴大則升級為警示。';
+  }else{
+    al.className='callout red';
+  }
+  setLamp(5, persistent?'r':(breach?'y':'g'),
+    persistent?'去化壓力警示':(breach?'庫存增速超前':'庫存與營收同步'),
+    latest.label+' 缺口 '+(gap>=0?'+':'')+gap.toFixed(1)+'pp');
+
+  const x = view.map(q=>q.label);
+  const traces = [
+    {x, y:view.map(q=>q.inv_yoy), type:'scatter', mode:'lines+markers', name:'庫存年增率',
+     line:{color:C.yellow,width:2}, marker:{size:5,color:C.yellow},
+     hovertemplate:'%{y:.1f}%<extra>庫存 YoY</extra>'},
+    {x, y:view.map(q=>q.rev_yoy), type:'scatter', mode:'lines+markers', name:'營收年增率',
+     line:{color:C.blue,width:2}, marker:{size:5,color:C.blue},
+     hovertemplate:'%{y:.1f}%<extra>營收 YoY</extra>'}
+  ];
+  const layout = {...LAYOUT_BASE,
+    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
+    yaxis:{title:{text:'YoY %',font:{size:11}}, gridcolor:C.grid, ticksuffix:'%'}
+  };
+  Plotly.react('chart-inv', traces, layout, PCONF);
+}
+
+/* ── 06 盈餘現金品質 ──────────────────────────────────────── */
+function renderOCF(){
+  const qs = DATA.quarters.filter(q=>q.ocf!=null && q.net_income!=null);
+  if(qs.length===0){ setLamp(6,'','數據不足','需要營運現金流數據'); return; }
+  const view = qs.slice(-20);
+  const latest = qs[qs.length-1];
+
+  const sum = (arr,f)=>arr.reduce((a,b)=>a+f(b),0);
+  let ratio=null, ttmOcf=null, ttmNi=null;
+  if(qs.length>=4){
+    const t4 = qs.slice(-4);
+    ttmOcf = sum(t4, q=>q.ocf);
+    ttmNi = sum(t4, q=>q.net_income);
+    if(ttmNi>0) ratio = ttmOcf/ttmNi;
+  }
+  const weak = ttmNi!=null && ttmNi>0 && (ratio==null ? false : ratio<0.8);
+  const lossQuality = ttmNi!=null && ttmNi>0 && ttmOcf<0;
+
+  $('ocf-ratio').textContent = ratio==null ? '—' : ratio.toFixed(2)+'x';
+  $('ocf-ratio').style.color = weak ? C.red : C.green;
+  $('ocf-fcf').textContent = latest.fcf==null ? '—' : (latest.fcf>=0?'+':'−')+fmtB(Math.abs(latest.fcf));
+  $('ocf-fcf').style.color = (latest.fcf!=null && latest.fcf<0) ? C.red : C.green;
+
+  const co = $('ocf-callout');
+  if(lossQuality){
+    co.className='callout red show';
+    co.innerHTML='<b>🔴 盈餘品質警示</b>：近四季合計淨利為正（'+fmtB(ttmNi)+
+      '），但同期營運現金流為負（'+fmtB(ttmOcf)+'）。淨利未能轉化為現金，建議檢查應收帳款、庫存是否持續吃現金。';
+  }else if(weak){
+    co.className='callout yellow show';
+    co.innerHTML='<b>🟡 觀察</b>：近四季現金轉換率（OCF/淨利）僅 '+ratio.toFixed(2)+
+      'x，低於 0.8x 門檻。獲利有轉化為現金但效率不高，留意營運資本變化。';
+  }else if(ratio!=null){
+    co.className='callout green show';
+    co.innerHTML='<b>🟢 盈餘品質良好</b>：近四季現金轉換率（OCF/淨利）達 '+ratio.toFixed(2)+
+      'x，淨利有確實轉化為現金，而非停留在應收帳款或庫存上。';
+  }else{
+    co.className='callout yellow';
+  }
+  setLamp(6, lossQuality?'r':(weak?'y':(ratio!=null?'g':'')),
+    lossQuality?'盈餘品質警示':(weak?'現金轉換率偏低':(ratio!=null?'盈餘品質良好':'數據不足')),
+    ratio!=null?('TTM OCF/NI '+ratio.toFixed(2)+'x'):'—');
+
+  const x = view.map(q=>q.label);
+  const traces = [
+    {x, y:view.map(q=>q.ocf), type:'bar', name:'營運現金流',
+     marker:{color:C.green}, hovertemplate:'%{y:$.3s}<extra>OCF</extra>'},
+    {x, y:view.map(q=>q.net_income), type:'bar', name:'淨利',
+     marker:{color:C.blue}, hovertemplate:'%{y:$.3s}<extra>淨利</extra>'}
+  ];
+  const layout = {...LAYOUT_BASE, barmode:'group', bargap:0.25,
+    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
+    yaxis:{title:{text:'USD',font:{size:11}}, gridcolor:C.grid, tickformat:'$.2s'}
+  };
+  Plotly.react('chart-ocf', traces, layout, PCONF);
+}
+
 /* ── 初始化 ──────────────────────────────────────────────── */
 function renderMeta(){
   const m = DATA.meta||{};
@@ -523,6 +668,10 @@ function renderMeta(){
     $('sample-badge').style.display='inline-block';
     $('m-source').textContent='範例資料';
   }
+  const filingUrl = (m.latest_filing||{}).url;
+  const linkEl = $('segment-link');
+  if(filingUrl){ linkEl.href = filingUrl; linkEl.target = '_blank'; linkEl.rel = 'noopener'; }
+  else { linkEl.removeAttribute('href'); }
 }
 
 function bindToggles(){
@@ -536,7 +685,7 @@ function bindToggles(){
 loadData().then(d=>{
   DATA=d;
   renderMeta(); bindToggles();
-  renderGM(); renderBS(); renderBB(); renderEQ();
+  renderGM(); renderBS(); renderBB(); renderEQ(); renderInv(); renderOCF();
 }).catch(e=>{
   const box=$('load-error');
   box.style.display='block';
