@@ -1,0 +1,48 @@
+name: Update DECK data
+
+on:
+  schedule:
+    # 每天 UTC 14:37 執行（美東上午，前一日的 SEC 申報已完全入庫）。
+    # 刻意避開整點，減少 GitHub 排程尖峰時段的延遲。Cron 使用 UTC 時間。
+    - cron: "37 14 * * *"
+  workflow_dispatch: {}   # 保留手動觸發：財報日當週想立即更新，到 Actions 頁按 Run workflow
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # fetch_data.py 僅使用標準函式庫（urllib / json），無需安裝任何套件
+
+      - name: Fetch data from SEC EDGAR
+        id: fetch
+        run: python fetch_data.py
+
+      # 腳本只在「有新財報」或「每週心跳」時輸出 commit_message；
+      # 其餘日子此步驟被跳過，不產生空 commit。
+      - name: Commit & push if data changed
+        if: steps.fetch.outputs.commit_message != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          if git diff --cached --quiet; then
+            echo "No file changes to commit."
+          else
+            git commit -m "${{ steps.fetch.outputs.commit_message }}"
+            git push
+          fi
