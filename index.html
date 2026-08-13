@@ -92,7 +92,7 @@
   .sec-status{display:flex;align-items:center;gap:7px;margin:6px 0 4px;flex-wrap:wrap}
   .lv{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
   .ls{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-left:auto;white-space:nowrap}
-  .chart{width:100%;height:205px}
+  .chart{width:100%;height:270px}
 
   /* 切換按鈕：分段控制器 */
   .toggles{display:inline-flex;gap:2px;margin:2px 0 6px;padding:3px;
@@ -237,10 +237,10 @@ const C = {
 const FONT = {family:"'IBM Plex Mono',monospace", size:11, color:C.ink2};
 const LAYOUT_BASE = {
   paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
-  font:FONT, margin:{l:52,r:52,t:14,b:58}, hovermode:'x unified',
+  font:FONT, margin:{l:52,r:52,t:14,b:66}, hovermode:'x unified',
   hoverlabel:{bgcolor:'#171c28', bordercolor:'#242938',
               font:{family:FONT.family,size:11,color:C.ink}},
-  legend:{orientation:'h', y:-0.22, font:{size:10.5,color:C.ink2}}
+  legend:{orientation:'h', y:-0.26, font:{size:10.5,color:C.ink2}}
 };
 const PCONF = {displayModeBar:false, responsive:true};
 
@@ -318,7 +318,7 @@ function renderGM(){
     traces[0].customdata = yoyDelta.map(d=>d==null?'—':((d>=0?'+':'')+d.toFixed(1)+'pp'));
     traces[0].hovertemplate = '%{y:.1f}%（vs 去年同期 %{customdata}）<extra>毛利率</extra>';
     layout = {...LAYOUT_BASE,
-      xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}},
+      xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
       yaxis:{title:{text:'毛利率 %',font:{size:11}}, gridcolor:C.grid, ticksuffix:'%'},
       shapes:[{type:'line', xref:'paper', x0:0, x1:1, y0:50, y1:50,
                line:{color:C.red, width:1.5, dash:'dash'}}],
@@ -393,7 +393,7 @@ function renderBS(){
      offsetgroup:'B', base:hasInterestDebt?qs.map(q=>q.debt_interest||0):undefined,
      marker:{color:C.yellow}, hovertemplate:'%{y:$.3s}<extra>租賃負債</extra>'});
   const layout = {...LAYOUT_BASE, barmode:'group', bargap:0.25,
-    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}},
+    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
     yaxis:{title:{text:'USD',font:{size:11}}, gridcolor:C.grid, tickformat:'$.2s'}
   };
   Plotly.react('chart-bs', traces, layout, PCONF);
@@ -452,7 +452,7 @@ function renderBB(){
   const ymax = Math.max(...view.map(q=>q.shares/1e6));
   const pad = (ymax-ymin)*0.3 || 2;
   const layout = {...LAYOUT_BASE,
-    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}},
+    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
     yaxis:{title:{text:'百萬股',font:{size:11}}, gridcolor:C.grid,
            range:[ymin-pad, ymax+pad]}   /* 截斷 Y 軸以放大遞減趨勢，軸標明確標示 */
   };
@@ -504,7 +504,7 @@ function renderEQ(){
      hovertemplate:'%{y:.1f}%<extra>淨利率</extra>'}
   ];
   const layout = {...LAYOUT_BASE,
-    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}},
+    xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}, nticks:12},
     yaxis:{title:{text:'EPS $',font:{size:11}}, gridcolor:C.grid, tickprefix:'$'},
     yaxis2:{title:{text:'淨利率 %',font:{size:11}}, overlaying:'y', side:'right',
             showgrid:false, ticksuffix:'%', rangemode:'tozero'}
