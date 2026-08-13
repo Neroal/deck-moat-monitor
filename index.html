@@ -4,100 +4,133 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DECK 護城河監控 — 長線價值儀表板</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
 <style>
   :root{
-    --bg:#F2F2F0;         /* 頁面底 */
-    --panel:#FFFFFF;      /* 卡片 */
-    --ink:#161616;        /* 主文字 */
-    --ink-2:#5C5C5A;      /* 次文字 */
-    --ink-3:#9A9A96;      /* 弱文字 */
-    --line:#E3E3E0;       /* 邊框 */
-    --grid:#ECECEA;       /* 圖表格線 */
-    --green:#2E9E5B;
-    --yellow:#D99A00;
-    --red:#D64545;
+    --bg:#0b0e14;          /* 頁面底：近黑深藍 */
+    --bg-2:#10141d;        /* 次層底：meta strip、輸入區 */
+    --panel:#131722;       /* 卡片底 */
+    --panel-2:#171c28;     /* 卡片內嵌區塊 */
+    --ink:#d7dae0;         /* 主文字 */
+    --ink-2:#868b98;       /* 次文字 */
+    --ink-3:#565b68;       /* 弱文字 */
+    --line:#242938;        /* 邊框 */
+    --line-soft:#1a1e2a;   /* 淡邊框 */
+    --grid:#1c212f;        /* 圖表格線 */
+    --green:#22ab94;       /* TradingView 系青綠 */
+    --green-soft:rgba(34,171,148,.14);
+    --yellow:#f0a93c;
+    --yellow-soft:rgba(240,169,60,.14);
+    --red:#f0505a;
+    --red-soft:rgba(240,80,90,.14);
+    --blue:#3b82f6;
     --mono:'IBM Plex Mono',ui-monospace,monospace;
-    --sans:'Noto Sans TC',system-ui,sans-serif;
+    --sans:'Inter','Noto Sans TC',system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{background:var(--bg)}
   body{font-family:var(--sans);color:var(--ink);line-height:1.55;
-       max-width:1180px;margin:0 auto;padding:28px 20px 72px}
+       max-width:1180px;margin:0 auto;padding:0 20px 16px;
+       -webkit-font-smoothing:antialiased}
+  ::selection{background:rgba(59,130,246,.35)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--ink-3)}
 
   /* ── 頁首 ─────────────────────────── */
-  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;margin-bottom:6px}
-  .ticker{font-family:var(--mono);font-weight:600;font-size:30px;letter-spacing:.5px}
-  h1{font-size:17px;font-weight:500;color:var(--ink-2)}
-  .creed{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
-  .meta-strip{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--mono);
-              font-size:11.5px;color:var(--ink-2);border-top:1px solid var(--line);
-              border-bottom:1px solid var(--line);padding:9px 2px;margin-bottom:22px}
+  header{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;
+         align-items:baseline;gap:8px 16px;padding:14px 0 8px;
+         background:linear-gradient(to bottom, var(--bg) 82%, transparent);
+         margin:0 0 -2px}
+  .ticker{font-family:var(--mono);font-weight:700;font-size:23px;letter-spacing:.5px;
+          color:var(--green)}
+  h1{font-size:14px;font-weight:500;color:var(--ink-2)}
+  .creed{font-size:11.5px;color:var(--ink-3);margin-bottom:8px}
+  .meta-strip{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--mono);
+              font-size:10.5px;color:var(--ink-2);margin-bottom:14px}
+  .meta-strip span{background:var(--bg-2);border:1px solid var(--line-soft);
+                   border-radius:20px;padding:3px 10px 3px 9px;display:inline-flex;
+                   align-items:center;gap:6px}
   .meta-strip b{color:var(--ink);font-weight:500}
-  .sample-badge{display:none;background:var(--ink);color:#fff;font-size:10.5px;
-                padding:1px 8px;border-radius:3px;letter-spacing:1px}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
+            box-shadow:0 0 6px rgba(34,171,148,.8);flex:0 0 auto}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .live-dot{animation:pulse 2.4s ease-in-out infinite}
+  @media (prefers-reduced-motion:reduce){.live-dot{animation:none}}
+  .sample-badge{display:none;background:var(--yellow-soft);color:var(--yellow);
+                border:1px solid rgba(240,169,60,.35);font-size:10.5px;font-weight:600;
+                padding:3px 10px;border-radius:20px;letter-spacing:.5px}
 
-  /* ── 簽名元素：控制室燈號列 ─────────── */
-  #lamp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
-  .lamp-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-             padding:14px 16px 13px;display:flex;gap:13px;align-items:flex-start}
-  .lamp{flex:0 0 auto;width:15px;height:15px;border-radius:50%;margin-top:4px;
-        background:#C9C9C6;box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}
-  .lamp.g{background:var(--green);box-shadow:0 0 0 4px rgba(46,158,91,.14),0 0 10px rgba(46,158,91,.55)}
-  .lamp.y{background:var(--yellow);box-shadow:0 0 0 4px rgba(217,154,0,.14),0 0 10px rgba(217,154,0,.55)}
-  .lamp.r{background:var(--red);box-shadow:0 0 0 4px rgba(214,69,69,.16),0 0 10px rgba(214,69,69,.6);
+  /* ── 簽名元素：燈號（現已併入各卡片標題列） ─── */
+  .lamp{flex:0 0 auto;width:10px;height:10px;border-radius:50%;
+        background:#3a3f4d;box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
+  .lamp.g{background:var(--green);box-shadow:0 0 0 3px var(--green-soft),0 0 8px rgba(34,171,148,.65)}
+  .lamp.y{background:var(--yellow);box-shadow:0 0 0 3px var(--yellow-soft),0 0 8px rgba(240,169,60,.65)}
+  .lamp.r{background:var(--red);box-shadow:0 0 0 3px var(--red-soft),0 0 8px rgba(240,80,90,.7);
           animation:blink 1.6s ease-in-out infinite}
   @keyframes blink{50%{opacity:.45}}
   @media (prefers-reduced-motion:reduce){.lamp.r{animation:none}}
-  .lamp-label{font-size:11px;color:var(--ink-3);letter-spacing:.5px}
-  .lamp-verdict{font-size:14px;font-weight:700;margin:1px 0 2px}
-  .lamp-sub{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
 
   /* ── 監控卡片 ─────────────────────── */
-  main{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 20px 12px}
-  .sec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:2px}
-  .sec-no{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
-  h2{font-size:15.5px;font-weight:700}
-  .sec-metric{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
-  .sec-desc{font-size:12px;color:var(--ink-2);margin:4px 0 10px}
-  .chart{width:100%;height:320px}
+  main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+          padding:12px 14px 8px;transition:border-color .15s}
+  section:hover{border-color:#2c3141}
+  .sec-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:2px}
+  .sec-no{font-family:var(--mono);font-size:11px;color:var(--ink-3);
+          background:var(--panel-2);border:1px solid var(--line);border-radius:6px;
+          padding:2px 7px;letter-spacing:.5px}
+  h2{font-size:14.5px;font-weight:600;color:var(--ink)}
+  .sec-metric{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
+             margin-left:auto;white-space:nowrap}
+  /* 狀態列：燈號＋判讀語，取代舊的獨立燈號排 */
+  .sec-status{display:flex;align-items:center;gap:7px;margin:6px 0 4px;flex-wrap:wrap}
+  .lv{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
+  .ls{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-left:auto;white-space:nowrap}
+  .chart{width:100%;height:205px}
 
-  /* 切換按鈕 */
-  .toggles{display:flex;gap:6px;margin:2px 0 8px;flex-wrap:wrap}
-  .tbtn{font-family:var(--mono);font-size:11px;padding:4px 12px;border-radius:6px;
-        border:1px solid var(--line);background:transparent;color:var(--ink-2);cursor:pointer}
-  .tbtn:hover{border-color:var(--ink-3)}
-  .tbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .tbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  /* 切換按鈕：分段控制器 */
+  .toggles{display:inline-flex;gap:2px;margin:2px 0 6px;padding:3px;
+          background:var(--bg-2);border:1px solid var(--line-soft);border-radius:8px;flex-wrap:wrap}
+  .tbtn{font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;
+        border:none;background:transparent;color:var(--ink-2);cursor:pointer;
+        transition:background .12s,color .12s}
+  .tbtn:hover{color:var(--ink)}
+  .tbtn.on{background:var(--blue);color:#fff}
+  .tbtn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
   /* 卡片內提示框 */
-  .callout{border-radius:8px;padding:10px 14px;font-size:12.5px;margin:6px 0 10px;display:none}
+  .callout{border-radius:8px;padding:8px 12px;font-size:11.5px;margin:6px 0 8px;display:none;
+           line-height:1.55}
   .callout.show{display:block}
-  .callout.green{background:rgba(46,158,91,.08);border:1px solid rgba(46,158,91,.35);color:#1E6B3E}
-  .callout.red{background:rgba(214,69,69,.08);border:1px solid rgba(214,69,69,.35);color:#A02F2F}
-  .callout.yellow{background:rgba(217,154,0,.08);border:1px solid rgba(217,154,0,.4);color:#8A6200}
-  .callout b{font-weight:700}
+  .callout.green{background:var(--green-soft);border:1px solid rgba(34,171,148,.35);color:#7fe0cd}
+  .callout.red{background:var(--red-soft);border:1px solid rgba(240,80,90,.4);color:#ff9aa1}
+  .callout.yellow{background:var(--yellow-soft);border:1px solid rgba(240,169,60,.4);color:#f7c374}
+  .callout b{font-weight:700;color:inherit}
 
   /* 統計小數字 */
-  .stats{display:flex;gap:26px;flex-wrap:wrap;margin:2px 0 6px}
-  .stat .k{font-size:11px;color:var(--ink-3)}
-  .stat .v{font-family:var(--mono);font-size:19px;font-weight:600}
-  .stat .v small{font-size:11px;color:var(--ink-3);font-weight:400}
+  .stats{display:flex;gap:20px;flex-wrap:wrap;margin:2px 0 6px}
+  .stat .k{font-size:10px;color:var(--ink-3);margin-bottom:2px}
+  .stat .v{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--ink)}
+  .stat .v small{font-size:10.5px;color:var(--ink-3);font-weight:400}
 
-  footer{margin-top:30px;font-size:11.5px;color:var(--ink-3);line-height:1.7}
-  #load-error{display:none;background:var(--panel);border:1px solid var(--line);
-              border-radius:10px;padding:18px;font-size:13px;color:var(--ink-2);margin-bottom:16px}
+  footer{margin-top:8px;font-size:10.5px;color:var(--ink-3);line-height:1.5;
+         border-top:1px solid var(--line-soft);padding-top:6px}
+  #load-error{display:none;background:var(--panel);border:1px solid var(--yellow);
+              border-radius:10px;padding:16px 18px;font-size:13px;color:var(--ink-2);margin-bottom:16px}
+  #load-error code{background:var(--panel-2);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:12px}
 
   @media (max-width:920px){
     main{grid-template-columns:1fr}
-    #lamp-strip{grid-template-columns:1fr 1fr}
   }
   @media (max-width:560px){
-    #lamp-strip{grid-template-columns:1fr}
-    .chart{height:280px}
+    .chart{height:260px}
+    header{position:static}
   }
 </style>
 </head>
@@ -113,38 +146,23 @@
 <div class="meta-strip" id="meta-strip">
   <span>最新數據季度 <b id="m-quarter">—</b></span>
   <span>來源文件 <b id="m-filing">—</b></span>
-  <span>系統最後檢查 <b id="m-checked">—</b></span>
+  <span><i class="live-dot"></i>系統最後檢查 <b id="m-checked">—</b></span>
   <span>數據來源 <b id="m-source">SEC EDGAR XBRL</b></span>
 </div>
 
 <div id="load-error"></div>
-
-<!-- 控制室燈號總覽 -->
-<div id="lamp-strip">
-  <div class="lamp-card"><div class="lamp" id="lamp1"></div><div>
-    <div class="lamp-label">01 · 核心品牌力</div>
-    <div class="lamp-verdict" id="v1">—</div>
-    <div class="lamp-sub" id="s1">—</div></div></div>
-  <div class="lamp-card"><div class="lamp" id="lamp2"></div><div>
-    <div class="lamp-label">02 · 財務防禦力</div>
-    <div class="lamp-verdict" id="v2">—</div>
-    <div class="lamp-sub" id="s2">—</div></div></div>
-  <div class="lamp-card"><div class="lamp" id="lamp3"></div><div>
-    <div class="lamp-label">03 · 回購效率</div>
-    <div class="lamp-verdict" id="v3">—</div>
-    <div class="lamp-sub" id="s3">—</div></div></div>
-  <div class="lamp-card"><div class="lamp" id="lamp4"></div><div>
-    <div class="lamp-label">04 · 每股含金量</div>
-    <div class="lamp-verdict" id="v4">—</div>
-    <div class="lamp-sub" id="s4">—</div></div></div>
-</div>
 
 <main>
   <!-- 一、毛利率 -->
   <section>
     <div class="sec-head"><span class="sec-no">01</span><h2>核心品牌力</h2>
       <span class="sec-metric">單季毛利率 Gross Margin</span></div>
-    <p class="sec-desc">UGG／HOKA 的定價權溫度計。跌破 50% 警戒線 → 品牌力可能衰退。</p>
+    <div class="sec-status"><span class="lamp" id="lamp1"></span><span class="lv" id="v1">—</span>
+      <span class="ls" id="s1">—</span></div>
+    <div class="stats">
+      <div class="stat"><div class="k">最新毛利率</div><div class="v" id="gm-latest">—</div></div>
+      <div class="stat"><div class="k">YoY 同期變化</div><div class="v" id="gm-yoy-stat">—</div></div>
+    </div>
     <div class="toggles">
       <button class="tbtn on" id="gm-mode-ts">時間序列</button>
       <button class="tbtn" id="gm-mode-yoy">YoY 同期對比</button>
@@ -159,7 +177,12 @@
   <section>
     <div class="sec-head"><span class="sec-no">02</span><h2>財務安全防禦力</h2>
       <span class="sec-metric">現金部位 vs 總負債</span></div>
-    <p class="sec-desc">綠燈採嚴格口徑：現金＋短投 &gt; 有息負債＋租賃負債，才算「財務絕對安全」。</p>
+    <div class="sec-status"><span class="lamp" id="lamp2"></span><span class="lv" id="v2">—</span>
+      <span class="ls" id="s2">—</span></div>
+    <div class="stats">
+      <div class="stat"><div class="k">淨現金部位</div><div class="v" id="bs-net">—</div></div>
+      <div class="stat"><div class="k">現金覆蓋倍數</div><div class="v" id="bs-ratio">—</div></div>
+    </div>
     <div class="callout green" id="bs-callout"></div>
     <div class="chart" id="chart-bs"></div>
   </section>
@@ -168,7 +191,8 @@
   <section>
     <div class="sec-head"><span class="sec-no">03</span><h2>股票回購進度</h2>
       <span class="sec-metric">在外流通股數 Shares Outstanding</span></div>
-    <p class="sec-desc">股數逐季遞減 = 你的持股比例在被動增加。</p>
+    <div class="sec-status"><span class="lamp" id="lamp3"></span><span class="lv" id="v3">—</span>
+      <span class="ls" id="s3">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">當季股數縮減率</div><div class="v" id="bb-rate">—</div></div>
       <div class="stat"><div class="k">近 5 年累計縮減</div><div class="v" id="bb-5y">—</div></div>
@@ -181,7 +205,8 @@
   <section>
     <div class="sec-head"><span class="sec-no">04</span><h2>每股含金量與賺錢效率</h2>
       <span class="sec-metric">稀釋 EPS（左軸）× 淨利率（右軸）</span></div>
-    <p class="sec-desc">回購背景下，EPS 是否跑得比營收快？這是長線複利效應的核心檢驗。</p>
+    <div class="sec-status"><span class="lamp" id="lamp4"></span><span class="lv" id="v4">—</span>
+      <span class="ls" id="s4">—</span></div>
     <div class="stats">
       <div class="stat"><div class="k">近四季 EPS 年增率</div><div class="v" id="eq-eps">—</div></div>
       <div class="stat"><div class="k">近四季營收年增率</div><div class="v" id="eq-rev">—</div></div>
@@ -192,8 +217,7 @@
 </main>
 
 <footer>
-  數據來源：SEC EDGAR 官方 XBRL 申報（10-Q / 10-K），由 GitHub Actions 每日檢查、偵測到新財報時自動更新。<br>
-  Q4 單季數據由「全年 − 前三季」反推；股數與 EPS 已換算為 2024/9 六股拆一之後的口徑。本頁僅供個人研究，不構成投資建議。
+  數據來源：SEC EDGAR XBRL，GitHub Actions 每日自動更新。Q4 由全年反推；股數/EPS 已換算 2024/9 拆股口徑。僅供個人研究，非投資建議。
 </footer>
 
 <script>
@@ -206,16 +230,17 @@
 const FALLBACK_DATA = {"meta":{"ticker":"DECK","company":"Deckers Outdoor Corporation","cik":"0000910521","source":"範例資料（部署後首次執行 GitHub Actions 將自動替換為 SEC EDGAR 真實數據）","sample":true,"last_checked":"2026-08-13T00:00:00Z","last_updated":"2026-08-13T00:00:00Z","latest_filing":{"form":"10-Q","filed":"2026-07-30"},"latest_quarter":"FY2027 Q1"},"quarters":[{"label":"FY2022 Q1","fy":2022,"q":1,"end":"2021-06-30","revenue":505000000,"cogs":247450000,"gross_margin":51.0,"net_income":63630000,"net_margin":12.6,"eps":0.39,"cash":1090000000,"sti":0,"debt_interest":0,"debt_lease":268000000,"shares":162600000},{"label":"FY2022 Q2","fy":2022,"q":2,"end":"2021-09-30","revenue":722000000,"cogs":358112000,"gross_margin":50.4,"net_income":102524000,"net_margin":14.2,"eps":0.63,"cash":810000000,"sti":0,"debt_interest":0,"debt_lease":271000000,"shares":161900000},{"label":"FY2022 Q3","fy":2022,"q":3,"end":"2021-12-31","revenue":1188000000,"cogs":577368000,"gross_margin":51.4,"net_income":222156000,"net_margin":18.7,"eps":1.38,"cash":1010000000,"sti":0,"debt_interest":0,"debt_lease":275000000,"shares":161000000},{"label":"FY2022 Q4","fy":2022,"q":4,"end":"2022-03-31","revenue":736000000,"cogs":378304000,"gross_margin":48.6,"net_income":79488000,"net_margin":10.8,"eps":0.5,"cash":1180000000,"sti":0,"debt_interest":0,"debt_lease":279000000,"shares":160300000},{"label":"FY2023 Q1","fy":2023,"q":1,"end":"2022-06-30","revenue":614000000,"cogs":318052000,"gross_margin":48.2,"net_income":73680000,"net_margin":12.0,"eps":0.46,"cash":1050000000,"sti":0,"debt_interest":0,"debt_lease":283000000,"shares":159500000},{"label":"FY2023 Q2","fy":2023,"q":2,"end":"2022-09-30","revenue":876000000,"cogs":447636000,"gross_margin":48.9,"net_income":127896000,"net_margin":14.6,"eps":0.81,"cash":780000000,"sti":0,"debt_interest":0,"debt_lease":286000000,"shares":158800000},{"label":"FY2023 Q3","fy":2023,"q":3,"end":"2022-12-31","revenue":1346000000,"cogs":632620000,"gross_margin":53.0,"net_income":262470000,"net_margin":19.5,"eps":1.66,"cash":1060000000,"sti":0,"debt_interest":0,"debt_lease":290000000,"shares":158100000},{"label":"FY2023 Q4","fy":2023,"q":4,"end":"2023-03-31","revenue":792000000,"cogs":396000000,"gross_margin":50.0,"net_income":91080000,"net_margin":11.5,"eps":0.58,"cash":1350000000,"sti":0,"debt_interest":0,"debt_lease":292000000,"shares":157600000},{"label":"FY2024 Q1","fy":2024,"q":1,"end":"2023-06-30","revenue":676000000,"cogs":329212000,"gross_margin":51.3,"net_income":91260000,"net_margin":13.5,"eps":0.58,"cash":1220000000,"sti":0,"debt_interest":0,"debt_lease":294000000,"shares":156900000},{"label":"FY2024 Q2","fy":2024,"q":2,"end":"2023-09-30","revenue":1092000000,"cogs":508872000,"gross_margin":53.4,"net_income":179088000,"net_margin":16.4,"eps":1.15,"cash":940000000,"sti":0,"debt_interest":0,"debt_lease":296000000,"shares":156200000},{"label":"FY2024 Q3","fy":2024,"q":3,"end":"2023-12-31","revenue":1560000000,"cogs":644280000,"gross_margin":58.7,"net_income":327600000,"net_margin":21.0,"eps":2.11,"cash":1260000000,"sti":60000000,"debt_interest":0,"debt_lease":299000000,"shares":155600000},{"label":"FY2024 Q4","fy":2024,"q":4,"end":"2024-03-31","revenue":960000000,"cogs":420480000,"gross_margin":56.2,"net_income":121920000,"net_margin":12.7,"eps":0.79,"cash":1440000000,"sti":110000000,"debt_interest":0,"debt_lease":301000000,"shares":155100000},{"label":"FY2025 Q1","fy":2025,"q":1,"end":"2024-06-30","revenue":825000000,"cogs":355575000,"gross_margin":56.9,"net_income":116325000,"net_margin":14.1,"eps":0.75,"cash":1330000000,"sti":150000000,"debt_interest":0,"debt_lease":303000000,"shares":154400000},{"label":"FY2025 Q2","fy":2025,"q":2,"end":"2024-09-30","revenue":1311000000,"cogs":578151000,"gross_margin":55.9,"net_income":222870000,"net_margin":17.0,"eps":1.45,"cash":1160000000,"sti":190000000,"debt_interest":0,"debt_lease":306000000,"shares":153600000},{"label":"FY2025 Q3","fy":2025,"q":3,"end":"2024-12-31","revenue":1827000000,"cogs":725319000,"gross_margin":60.3,"net_income":407421000,"net_margin":22.3,"eps":2.67,"cash":1490000000,"sti":230000000,"debt_interest":0,"debt_lease":308000000,"shares":152800000},{"label":"FY2025 Q4","fy":2025,"q":4,"end":"2025-03-31","revenue":1023000000,"cogs":442959000,"gross_margin":56.7,"net_income":131967000,"net_margin":12.9,"eps":0.87,"cash":1720000000,"sti":260000000,"debt_interest":0,"debt_lease":310000000,"shares":152100000},{"label":"FY2026 Q1","fy":2026,"q":1,"end":"2025-06-30","revenue":965000000,"cogs":426530000,"gross_margin":55.8,"net_income":133170000,"net_margin":13.8,"eps":0.88,"cash":1540000000,"sti":240000000,"debt_interest":0,"debt_lease":312000000,"shares":151300000},{"label":"FY2026 Q2","fy":2026,"q":2,"end":"2025-09-30","revenue":1430000000,"cogs":640640000,"gross_margin":55.2,"net_income":237380000,"net_margin":16.6,"eps":1.58,"cash":1310000000,"sti":210000000,"debt_interest":0,"debt_lease":314000000,"shares":150600000},{"label":"FY2026 Q3","fy":2026,"q":3,"end":"2025-12-31","revenue":1900000000,"cogs":780900000,"gross_margin":58.9,"net_income":408500000,"net_margin":21.5,"eps":2.73,"cash":1600000000,"sti":220000000,"debt_interest":0,"debt_lease":316000000,"shares":149900000},{"label":"FY2026 Q4","fy":2026,"q":4,"end":"2026-03-31","revenue":1050000000,"cogs":462000000,"gross_margin":56.0,"net_income":130200000,"net_margin":12.4,"eps":0.87,"cash":1650000000,"sti":200000000,"debt_interest":0,"debt_lease":318000000,"shares":149200000},{"label":"FY2027 Q1","fy":2027,"q":1,"end":"2026-06-30","revenue":1020000000,"cogs":454920000,"gross_margin":55.4,"net_income":138720000,"net_margin":13.6,"eps":0.94,"cash":1500000000,"sti":180000000,"debt_interest":0,"debt_lease":320000000,"shares":148300000}]};
 
 const C = {
-  ink:'#161616', ink2:'#5C5C5A', ink3:'#9A9A96', grid:'#ECECEA',
-  green:'#2E9E5B', yellow:'#D99A00', red:'#D64545',
-  gray1:'#3A3A38', gray2:'#B9B9B5'
+  ink:'#d7dae0', ink2:'#868b98', ink3:'#565b68', grid:'#1c212f',
+  green:'#22ab94', yellow:'#f0a93c', red:'#f0505a', blue:'#3b82f6', purple:'#a78bfa',
+  gray1:'#c4c8d1', gray2:'#454b5a'
 };
 const FONT = {family:"'IBM Plex Mono',monospace", size:11, color:C.ink2};
 const LAYOUT_BASE = {
   paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
   font:FONT, margin:{l:52,r:52,t:14,b:58}, hovermode:'x unified',
-  hoverlabel:{font:{family:FONT.family,size:11}},
-  legend:{orientation:'h', y:-0.22, font:{size:10.5}}
+  hoverlabel:{bgcolor:'#171c28', bordercolor:'#242938',
+              font:{family:FONT.family,size:11,color:C.ink}},
+  legend:{orientation:'h', y:-0.22, font:{size:10.5,color:C.ink2}}
 };
 const PCONF = {displayModeBar:false, responsive:true};
 
@@ -267,17 +292,22 @@ function renderGM(){
   }else{ al.className='callout red'; }
 
   // 燈號
-  const yoyTxt = yoyPeer ? ('YoY '+(latest.gross_margin-yoyPeer.gross_margin>=0?'+':'')+
-        (latest.gross_margin-yoyPeer.gross_margin).toFixed(1)+'pp') : '';
-  setLamp(1, breach?'r':'g', breach?'定價權警示':'定價權穩固',
-          latest.label+' 毛利率 '+fmtPct(latest.gross_margin)+(yoyTxt?' · '+yoyTxt:''));
+  setLamp(1, breach?'r':'g', breach?'定價權警示':'定價權穩固', latest.label);
+
+  // 關鍵數字
+  $('gm-latest').textContent = fmtPct(latest.gross_margin);
+  $('gm-latest').style.color = breach ? C.red : C.green;
+  const yoyDeltaStat = yoyPeer ? (latest.gross_margin-yoyPeer.gross_margin) : null;
+  $('gm-yoy-stat').textContent = yoyDeltaStat==null ? '—' :
+    (yoyDeltaStat>=0?'+':'')+yoyDeltaStat.toFixed(1)+'pp';
+  $('gm-yoy-stat').style.color = yoyDeltaStat==null ? C.ink : (yoyDeltaStat>=0 ? C.green : C.red);
 
   let traces, layout;
   if(gmMode==='ts'){
     traces = [{
       x:view.map(q=>q.label), y:view.map(q=>q.gross_margin),
       type:'scatter', mode:'lines+markers', name:'單季毛利率',
-      line:{color:C.gray1,width:2}, marker:{size:5,color:C.gray1},
+      line:{color:C.green,width:2}, marker:{size:5,color:C.green},
       hovertemplate:'%{y:.1f}%<extra>毛利率</extra>'
     }];
     // YoY 輔助：hover 顯示 vs 去年同期
@@ -298,7 +328,7 @@ function renderGM(){
   }else{
     // YoY 模式：X 軸=財年，四條線=Q1~Q4，季節性被完全排除
     const fys = [...new Set(qs.map(q=>q.fy))].sort();
-    const shades = ['#C9C9C5','#9C9C98','#61615E','#161616'];
+    const shades = [C.green, C.blue, C.yellow, C.purple];
     traces = [1,2,3,4].map(qq=>({
       x: fys.map(f=>'FY'+f),
       y: fys.map(f=>{const hit=qs.find(x=>x.fy===f&&x.q===qq);return hit?hit.gross_margin:null;}),
@@ -337,22 +367,31 @@ function renderBS(){
     co.innerHTML='<b>🟡 注意</b>：總負債 '+fmtB(debtT)+' 已高於現金部位 '+fmtB(cashT)+
       '，缺口 '+fmtB(debtT-cashT)+'。建議檢視是擴張性租約增加、或現金被大量消耗所致。';
   }
-  setLamp(2, safe?'g':'y', safe?'財務絕對安全':'負債高於現金',
-          '現金 '+fmtB(cashT)+' vs 負債 '+fmtB(debtT));
+  setLamp(2, safe?'g':'y', safe?'財務絕對安全':'負債高於現金', latest.label);
+
+  // 關鍵數字
+  const net = cashT - debtT;
+  $('bs-net').textContent = (net>=0?'+':'−')+fmtB(Math.abs(net));
+  $('bs-net').style.color = net>=0 ? C.green : C.yellow;
+  $('bs-ratio').textContent = debtT>0 ? (cashT/debtT).toFixed(1)+'x' : '∞';
+  $('bs-ratio').style.color = safe ? C.green : C.yellow;
 
   const x = qs.map(q=>q.label);
+  const hasInterestDebt = qs.some(q=>(q.debt_interest||0) > 0);
   const traces = [
     {x, y:qs.map(q=>q.cash), name:'現金及約當現金', type:'bar',
-     offsetgroup:'A', marker:{color:C.gray1}, hovertemplate:'%{y:$.3s}<extra>現金</extra>'},
+     offsetgroup:'A', marker:{color:C.green}, hovertemplate:'%{y:$.3s}<extra>現金</extra>'},
     {x, y:qs.map(q=>q.sti||0), name:'短期投資', type:'bar',
-     offsetgroup:'A', base:qs.map(q=>q.cash), marker:{color:'#7E7E7A'},
+     offsetgroup:'A', base:qs.map(q=>q.cash), marker:{color:'#7ddcc4'},
      hovertemplate:'%{y:$.3s}<extra>短期投資</extra>'},
-    {x, y:qs.map(q=>q.debt_interest||0), name:'有息負債', type:'bar',
-     offsetgroup:'B', marker:{color:C.red}, hovertemplate:'%{y:$.3s}<extra>有息負債</extra>'},
-    {x, y:qs.map(q=>q.debt_lease||0), name:'營運租賃負債', type:'bar',
-     offsetgroup:'B', base:qs.map(q=>q.debt_interest||0), marker:{color:C.gray2},
-     hovertemplate:'%{y:$.3s}<extra>租賃負債</extra>'}
   ];
+  if(hasInterestDebt){
+    traces.push({x, y:qs.map(q=>q.debt_interest||0), name:'有息負債', type:'bar',
+     offsetgroup:'B', marker:{color:C.red}, hovertemplate:'%{y:$.3s}<extra>有息負債</extra>'});
+  }
+  traces.push({x, y:qs.map(q=>q.debt_lease||0), name:'營運租賃負債', type:'bar',
+     offsetgroup:'B', base:hasInterestDebt?qs.map(q=>q.debt_interest||0):undefined,
+     marker:{color:C.yellow}, hovertemplate:'%{y:$.3s}<extra>租賃負債</extra>'});
   const layout = {...LAYOUT_BASE, barmode:'group', bargap:0.25,
     xaxis:{tickangle:-45, gridcolor:C.grid, tickfont:{size:10}},
     yaxis:{title:{text:'USD',font:{size:11}}, gridcolor:C.grid, tickformat:'$.2s'}
@@ -398,9 +437,15 @@ function renderBB(){
     setLamp(3,'y','本季無淨回購', prev?('股數 '+(rate<0?'+':'')+(-rate).toFixed(2)+'%'):'—');
   }
 
+  const barColors = view.map((q,i)=>{
+    const idx = qs.indexOf(q);
+    const p = idx>0 ? qs[idx-1] : null;
+    if(!p) return C.ink3;
+    return q.shares < p.shares ? C.green : (q.shares > p.shares ? C.red : C.ink3);
+  });
   const traces=[{
     x:view.map(q=>q.label), y:view.map(q=>q.shares/1e6),
-    type:'bar', name:'在外流通股數', marker:{color:C.gray1},
+    type:'bar', name:'在外流通股數', marker:{color:barColors},
     hovertemplate:'%{y:.1f}M 股<extra></extra>'
   }];
   const ymin = Math.min(...view.map(q=>q.shares/1e6));
@@ -452,10 +497,10 @@ function renderEQ(){
   const x = view.map(q=>q.label);
   const traces=[
     {x, y:view.map(q=>q.eps), type:'bar', name:'稀釋 EPS（左軸）',
-     marker:{color:C.gray2}, hovertemplate:'$%{y:.2f}<extra>EPS</extra>'},
+     marker:{color:C.green}, hovertemplate:'$%{y:.2f}<extra>EPS</extra>'},
     {x, y:view.map(q=>q.net_margin), type:'scatter', mode:'lines+markers',
      name:'淨利率（右軸）', yaxis:'y2',
-     line:{color:C.gray1,width:2}, marker:{size:5,color:C.gray1},
+     line:{color:C.blue,width:2}, marker:{size:5,color:C.blue},
      hovertemplate:'%{y:.1f}%<extra>淨利率</extra>'}
   ];
   const layout = {...LAYOUT_BASE,
