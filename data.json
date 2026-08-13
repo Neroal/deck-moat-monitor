@@ -5,11 +5,12 @@
   "cik": "0000910521",
   "source": "SEC EDGAR XBRL (data.sec.gov)",
   "sample": false,
-  "last_checked": "2026-08-13T01:25:16Z",
-  "last_updated": "2026-08-13T01:25:16Z",
+  "last_checked": "2026-08-13T05:42:48Z",
+  "last_updated": "2026-08-13T05:42:48Z",
   "latest_filing": {
    "form": "10-Q",
-   "filed": "2026-07-30"
+   "filed": "2026-07-30",
+   "url": "https://www.sec.gov/Archives/edgar/data/910521/000091052126000022/deck-20260630.htm"
   },
   "latest_quarter": "FY2027 Q1"
  },
@@ -29,6 +30,10 @@
    "sti": 0,
    "debt_interest": 557000,
    "debt_lease": 0,
+   "inventory": 441648000,
+   "ocf": -7348000,
+   "capex": 3835000,
+   "fcf": -11183000,
    "shares": 191991720
   },
   {
@@ -46,6 +51,10 @@
    "sti": 0,
    "debt_interest": 133474000,
    "debt_lease": 0,
+   "inventory": 555560000,
+   "ocf": -175442000,
+   "capex": 6323000,
+   "fcf": -181765000,
    "shares": 191768502
   },
   {
@@ -63,6 +72,10 @@
    "sti": 0,
    "debt_interest": 571000,
    "debt_lease": 0,
+   "inventory": 396309000,
+   "ocf": 435886000,
+   "capex": 11251000,
+   "fcf": 424635000,
    "shares": 190577172
   },
   {
@@ -80,6 +93,10 @@
    "sti": 0,
    "debt_interest": 578000,
    "debt_lease": 0,
+   "inventory": 299602000,
+   "ocf": 74259000,
+   "capex": 13404000,
+   "fcf": 60855000,
    "shares": 182686848
   },
   {
@@ -97,6 +114,10 @@
    "sti": 0,
    "debt_interest": 585000,
    "debt_lease": 0,
+   "inventory": 435564000,
+   "ocf": 8073000,
+   "capex": 7286000,
+   "fcf": 787000,
    "shares": 180444270
   },
   {
@@ -114,6 +135,10 @@
    "sti": 0,
    "debt_interest": 71473000,
    "debt_lease": 0,
+   "inventory": 514927000,
+   "ocf": -168809000,
+   "capex": 6805000,
+   "fcf": -175614000,
    "shares": 174733254
   },
   {
@@ -131,6 +156,10 @@
    "sti": 0,
    "debt_interest": 600000,
    "debt_lease": 0,
+   "inventory": 342043000,
+   "ocf": 440476000,
+   "capex": 7741000,
+   "fcf": 432735000,
    "shares": 174785928
   },
   {
@@ -148,6 +177,10 @@
    "sti": 0,
    "debt_interest": 603000,
    "debt_lease": 0,
+   "inventory": 278842000,
+   "ocf": 79765000,
+   "capex": 7254000,
+   "fcf": 72511000,
    "shares": 174852012
   },
   {
@@ -165,6 +198,10 @@
    "sti": 0,
    "debt_interest": 611000,
    "debt_lease": 255027000,
+   "inventory": 473394000,
+   "ocf": -46629000,
+   "capex": 7393000,
+   "fcf": -54022000,
    "shares": 173287962
   },
   {
@@ -182,6 +219,10 @@
    "sti": 0,
    "debt_interest": 13599000,
    "debt_lease": 250522000,
+   "inventory": 558875000,
+   "ocf": -169527000,
+   "capex": 7551000,
+   "fcf": -177078000,
    "shares": 167856552
   },
   {
@@ -199,6 +240,10 @@
    "sti": 0,
    "debt_interest": 6645000,
    "debt_lease": 240083000,
+   "inventory": 365946000,
+   "ocf": 454881000,
+   "capex": 8720000,
+   "fcf": 446161000,
    "shares": 167925522
   },
   {
@@ -216,6 +261,10 @@
    "sti": 0,
    "debt_interest": 638000,
    "debt_lease": 264815000,
+   "inventory": 311620000,
+   "ocf": 47609000,
+   "capex": 8791000,
+   "fcf": 38818000,
    "shares": 167996808
   },
   {
@@ -233,6 +282,10 @@
    "sti": 0,
    "debt_interest": 646000,
    "debt_lease": 253564000,
+   "inventory": 434974000,
+   "ocf": 21169000,
+   "capex": 9253000,
+   "fcf": 11916000,
    "shares": 168128166
   },
   {
@@ -250,6 +303,10 @@
    "sti": 0,
    "debt_interest": 9965000,
    "debt_lease": 245589000,
+   "inventory": 484138000,
+   "ocf": -37130000,
+   "capex": 4080000,
+   "fcf": -41210000,
    "shares": 168504360
   },
   {
@@ -267,6 +324,10 @@
    "sti": 0,
    "debt_interest": 663000,
    "debt_lease": 234708000,
+   "inventory": 305298000,
+   "ocf": 538223000,
+   "capex": 7967000,
+   "fcf": 530256000,
    "shares": 169019520
   },
   {
@@ -284,6 +345,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 223042000,
+   "inventory": 278242000,
+   "ocf": 73955000,
+   "capex": 10918000,
+   "fcf": 63037000,
    "shares": 166878138
   },
   {
@@ -301,6 +366,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 232056000,
+   "inventory": 457704000,
+   "ocf": -36332000,
+   "capex": 15515000,
+   "fcf": -51847000,
    "shares": 165976722
   },
   {
@@ -318,6 +387,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 230956000,
+   "inventory": 636270000,
+   "ocf": -136342000,
+   "capex": 11204000,
+   "fcf": -147546000,
    "shares": 164688720
   },
   {
@@ -335,6 +408,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 219604000,
+   "inventory": 550749000,
+   "ocf": 400044000,
+   "capex": 14596000,
+   "fcf": 385448000,
    "shares": 163447698
   },
   {
@@ -352,6 +429,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 222070000,
+   "inventory": 506796000,
+   "ocf": -55017000,
+   "capex": 9702000,
+   "fcf": -64719000,
    "shares": 160739166
   },
   {
@@ -369,6 +450,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 206795000,
+   "inventory": 839509000,
+   "ocf": -28921000,
+   "capex": 12467000,
+   "fcf": -41388000,
    "shares": 159186276
   },
   {
@@ -386,6 +471,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 197145000,
+   "inventory": 925043000,
+   "ocf": -207925000,
+   "capex": 11787000,
+   "fcf": -219712000,
    "shares": 158800776
   },
   {
@@ -403,6 +492,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 200405000,
+   "inventory": 723364000,
+   "ocf": 714729000,
+   "capex": 31805000,
+   "fcf": 682924000,
    "shares": 158155548
   },
   {
@@ -420,6 +513,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 246488000,
+   "inventory": 532852000,
+   "ocf": 59539000,
+   "capex": 24966000,
+   "fcf": 34573000,
    "shares": 156959076
   },
   {
@@ -437,6 +534,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 260601000,
+   "inventory": 740553000,
+   "ocf": 125262000,
+   "capex": 30732000,
+   "fcf": 94530000,
    "shares": 156806748
   },
   {
@@ -454,6 +555,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 251068000,
+   "inventory": 726332000,
+   "ocf": -3734000,
+   "capex": 26704000,
+   "fcf": -30438000,
    "shares": 154385244
   },
   {
@@ -471,6 +576,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 273991000,
+   "inventory": 538963000,
+   "ocf": 940330000,
+   "capex": 16642000,
+   "fcf": 923688000,
    "shares": 154009320
   },
   {
@@ -488,6 +597,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 266879000,
+   "inventory": 474311000,
+   "ocf": -28674000,
+   "capex": 15287000,
+   "fcf": -43961000,
    "shares": 152654970
   },
   {
@@ -505,6 +618,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 262368000,
+   "inventory": 753282000,
+   "ocf": 112650000,
+   "capex": 22521000,
+   "fcf": 90129000,
    "shares": 152463432
   },
   {
@@ -522,6 +639,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 258623000,
+   "inventory": 777891000,
+   "ocf": -90550000,
+   "capex": 22846000,
+   "fcf": -113396000,
    "shares": 151921988
   },
   {
@@ -539,6 +660,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 257029000,
+   "inventory": 576669000,
+   "ocf": 1095415000,
+   "capex": 24362000,
+   "fcf": 1071053000,
    "shares": 151773639
   },
   {
@@ -556,6 +681,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 276975000,
+   "inventory": 495226000,
+   "ocf": -72992000,
+   "capex": 16442000,
+   "fcf": -89434000,
    "shares": 149435875
   },
   {
@@ -573,6 +702,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 312071000,
+   "inventory": 849351000,
+   "ocf": 36146000,
+   "capex": 23940000,
+   "fcf": 12206000,
    "shares": 148343362
   },
   {
@@ -590,6 +723,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 350672000,
+   "inventory": 835595000,
+   "ocf": 8087000,
+   "capex": 22003000,
+   "fcf": -13916000,
    "shares": 145744833
   },
   {
@@ -607,6 +744,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 342882000,
+   "inventory": 633485000,
+   "ocf": 1041880000,
+   "capex": 21598000,
+   "fcf": 1020282000,
    "shares": 141949971
   },
   {
@@ -624,6 +765,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 375194000,
+   "inventory": 487018000,
+   "ocf": 95842000,
+   "capex": 17082000,
+   "fcf": 78760000,
    "shares": 138880957
   },
   {
@@ -641,6 +786,10 @@
    "sti": 0,
    "debt_interest": 0,
    "debt_lease": 472334000,
+   "inventory": 807580000,
+   "ocf": 47904000,
+   "capex": 15222000,
+   "fcf": 32682000,
    "shares": 136414227
   }
  ]
