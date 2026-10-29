@@ -5,14 +5,14 @@
   "cik": "0000910521",
   "source": "SEC EDGAR XBRL (data.sec.gov)",
   "sample": false,
-  "last_checked": "2026-10-25T17:46:35Z",
-  "last_updated": "2026-08-13T05:42:48Z",
+  "last_checked": "2026-10-29T19:47:46Z",
+  "last_updated": "2026-10-29T19:47:46Z",
   "latest_filing": {
    "form": "10-Q",
-   "filed": "2026-07-30",
-   "url": "https://www.sec.gov/Archives/edgar/data/910521/000091052126000022/deck-20260630.htm"
+   "filed": "2026-10-29",
+   "url": "https://www.sec.gov/Archives/edgar/data/910521/000162828026068116/deck-20260930.htm"
   },
-  "latest_quarter": "FY2027 Q1"
+  "latest_quarter": "FY2027 Q2"
  },
  "quarters": [
   {
@@ -725,8 +725,8 @@
    "debt_lease": 350672000,
    "inventory": 835595000,
    "ocf": 8087000,
-   "capex": 22003000,
-   "fcf": -13916000,
+   "capex": 21992000,
+   "fcf": -13905000,
    "shares": 145744833
   },
   {
@@ -746,8 +746,8 @@
    "debt_lease": 342882000,
    "inventory": 633485000,
    "ocf": 1041880000,
-   "capex": 21598000,
-   "fcf": 1020282000,
+   "capex": 21609000,
+   "fcf": 1020271000,
    "shares": 141949971
   },
   {
@@ -791,6 +791,27 @@
    "capex": 15222000,
    "fcf": 32682000,
    "shares": 136414227
+  },
+  {
+   "label": "FY2027 Q2",
+   "fy": 2027,
+   "q": 2,
+   "end": "2026-09-30",
+   "revenue": 1480554000,
+   "cogs": 585442000,
+   "gross_margin": 60.46,
+   "net_income": 313135000,
+   "net_margin": 21.15,
+   "eps": 2.31,
+   "cash": 1209722000,
+   "sti": 0,
+   "debt_interest": 0,
+   "debt_lease": 539520000,
+   "inventory": 860849000,
+   "ocf": -57166000,
+   "capex": 21954000,
+   "fcf": -79120000,
+   "shares": 133479987
   }
  ]
 }
